@@ -1,0 +1,4 @@
+[Project]
+Name=SFML_Test
+Manager=KDevCMakeManager
+VersionControl=kdevgit
