@@ -15,30 +15,30 @@ int cmp(float left, float right)
 
 void move_shapes(sf::RenderWindow* window, sf::CircleShape* shapes, float move_vecs[][2], int nr_shapes)
 {
-	int was_budged[nr_shapes] = {0};
+	bool was_budged[nr_shapes] = {0};
 	for (int shape_id = 0;  shape_id < nr_shapes; shape_id++)
 	{
 		sf::CircleShape shape = shapes[shape_id];
 		float * move_vec = move_vecs[shape_id];
-		
 		sf::Vector2f position_ = shape.getPosition() + sf::Vector2f(shape.getRadius(), shape.getRadius());
 		float position[] = {position_.x, position_.y};
 		sf::Vector2u frame_ = window->getSize();
 		unsigned int frame[] = {frame_.x,frame_.y};
+        
 		for (int neighbour_id = 0; neighbour_id < nr_shapes && !was_budged[shape_id]; neighbour_id++)
 		{
-			if (neighbour_id == shape_id) //|| was_budged[neighbour_id])
+			if (neighbour_id == shape_id)
 				continue;
 			sf::CircleShape neighbour = shapes[neighbour_id];
-			sf::Vector2f neighbour_position_ = neighbour.getPosition() + sf::Vector2f(neighbour.getRadius(), neighbour.getRadius());
+			sf::Vector2f neighbour_position_ = neighbour.getPosition() + sf::Vector2f(neighbour.getRadius(), 
+                neighbour.getRadius());
+            
 			sf::Vector2f deltashapes_ = position_ - neighbour_position_;
-			
-			//float neighbour_position[] = {neighbour_position_.x, neighbour_position_.y};
-			//float deltashapes[] = {deltashapes_.x, deltashapes_.y};
-			float totradius = neighbour.getRadius() + shape.getRadius();
+            float totradius = neighbour.getRadius() + shape.getRadius();
+            
 			for (int dim = 0; dim < 2; dim++)
 			{
-				if (std::abs(deltashapes_.x) < totradius && std::abs(deltashapes_.y) < totradius)//these will collide
+				if (std::sqrt(std::pow(deltashapes_.x, 2) + std::pow(deltashapes_.y, 2)) < totradius)//these will collide
 				{
                     std::swap(move_vecs[shape_id][dim], move_vecs[neighbour_id][dim]);
 					was_budged[shape_id] = true;
@@ -47,6 +47,7 @@ void move_shapes(sf::RenderWindow* window, sf::CircleShape* shapes, float move_v
 			}
 		}
 		for (int dim = 0; dim < 2; dim++)
+            //check hit bounds
 			if ((position[dim] - shape.getRadius() < 0 && move_vec[dim] < 0) 
 				|| 
 				(position[dim] + shape.getRadius() > frame[dim] && move_vec[dim] > 0))
@@ -65,7 +66,6 @@ void handle_events(sf::RenderWindow* window, float move_vecs[][2])
         if (event.type == sf::Event::KeyPressed)
             switch (event.key.code)
             {
-                
                 case sf::Keyboard::Up:
                     move_vecs[0][1] -= move_speed;
                     break;
@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
         handle_events(&window, move_vecs);
         window.clear();
 		move_shapes(&window, shapes,move_vecs, nr_shapes);
-		for (auto shape:shapes)
+		for (auto shape : shapes)
 			window.draw(shape);
         window.display();
     }
