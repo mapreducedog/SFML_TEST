@@ -77,6 +77,9 @@ void handle_events(sf::RenderWindow* window, float move_vecs[][2])
                 case sf::Keyboard::Right:
                     move_vecs[0][0] += 0.1;
                     break;
+                case sf::Keyboard::Q:
+                    window->close();
+                    break;
                 default:
                     break;
             }
