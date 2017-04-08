@@ -38,10 +38,9 @@ void move_shapes(sf::RenderWindow* window, sf::CircleShape* shapes, float move_v
 			float totradius = neighbour.getRadius() + shape.getRadius();
 			for (int dim = 0; dim < 2; dim++)
 			{
-				if (move_vecs[neighbour_id][dim] < move_vecs[shape_id][dim]  && abs(deltashapes_.x) < totradius && std::abs(deltashapes_.y) < totradius)//these will collide
+				if (std::abs(deltashapes_.x) < totradius && std::abs(deltashapes_.y) < totradius)//these will collide
 				{
-					move_vecs[shape_id][dim] *= -1;
-					move_vecs[neighbour_id][dim] *= -1;
+                    std::swap(move_vecs[shape_id][dim], move_vecs[neighbour_id][dim]);
 					was_budged[shape_id] = true;
 					was_budged[neighbour_id] = true;
 				}
