@@ -2,6 +2,7 @@
 #include <SFML/Window.hpp>
 #include <iostream>
 #include <time.h> /* for time */
+/*put some comment here*/
 int cmp(float left, float right)
 {
 	if (left > right)
@@ -32,12 +33,12 @@ void move_shapes(sf::RenderWindow* window, sf::CircleShape* shapes, float move_v
 			sf::Vector2f neighbour_position_ = neighbour.getPosition() + sf::Vector2f(neighbour.getRadius(), neighbour.getRadius());
 			sf::Vector2f deltashapes_ = position_ - neighbour_position_;
 			
-			float neighbour_position[] = {neighbour_position_.x, neighbour_position_.y};
-			float deltashapes[] = {deltashapes_.x, deltashapes_.y};
+			//float neighbour_position[] = {neighbour_position_.x, neighbour_position_.y};
+			//float deltashapes[] = {deltashapes_.x, deltashapes_.y};
 			float totradius = neighbour.getRadius() + shape.getRadius();
 			for (int dim = 0; dim < 2; dim++)
 			{
-				if (move_vecs[neighbour_id][dim] < move_vecs[shape_id][dim]  && abs(deltashapes_.x) < totradius && abs(deltashapes_.y) < totradius)//these will collide
+				if (move_vecs[neighbour_id][dim] < move_vecs[shape_id][dim]  && abs(deltashapes_.x) < totradius && std::abs(deltashapes_.y) < totradius)//these will collide
 				{
 					move_vecs[shape_id][dim] *= -1;
 					move_vecs[neighbour_id][dim] *= -1;
@@ -56,7 +57,6 @@ void move_shapes(sf::RenderWindow* window, sf::CircleShape* shapes, float move_v
 }
 void handle_events(sf::RenderWindow* window, float move_vecs[][2])
 {
-
     sf::Event event;
     while (window->pollEvent(event))
     {
