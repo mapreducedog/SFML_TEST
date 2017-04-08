@@ -54,6 +54,36 @@ void move_shapes(sf::RenderWindow* window, sf::CircleShape* shapes, float move_v
 		shapes[shape_id].move(move_vec[0], move_vec[1]);
 	}
 }
+void handle_events(sf::RenderWindow* window, float move_vecs[][2])
+{
+
+    sf::Event event;
+    while (window->pollEvent(event))
+    {
+        if (event.type == sf::Event::Closed)
+            window->close();
+        if (event.type == sf::Event::KeyPressed)
+            switch (event.key.code)
+            {
+                case sf::Keyboard::Up:
+                    move_vecs[0][1] += -0.1;
+                    break;
+                case sf::Keyboard::Down:
+                    move_vecs[0][1] += 0.1;
+                    break;
+                case sf::Keyboard::Left:
+                    move_vecs[0][0] += -0.1;
+                    break;
+                case sf::Keyboard::Right:
+                    move_vecs[0][0] += 0.1;
+                    break;
+                default:
+                    break;
+            }
+    }
+}
+
+
 
 
 int main(int argc, char* argv[])
@@ -84,28 +114,7 @@ int main(int argc, char* argv[])
 	}
     while (window.isOpen())
     {
-        sf::Event event;
-        while (window.pollEvent(event))
-		{
-            if (event.type == sf::Event::Closed)
-                window.close();
-			if (event.type == sf::Event::KeyPressed)
-				switch (event.key.code)
-				{
-					case sf::Keyboard::Up:
-						move_vecs[0][1] += -0.1;
-						break;
-					case sf::Keyboard::Down:
-						move_vecs[0][1] += 0.1;
-						break;
-					case sf::Keyboard::Left:
-						move_vecs[0][0] += -0.1;
-						break;
-					case sf::Keyboard::Right:
-						move_vecs[0][0] += 0.1;
-						break;
-				}
-		}
+        handle_events(&window, move_vecs);
         window.clear();
 		move_shapes(&window, shapes,move_vecs, nr_shapes);
 		for (auto shape:shapes)
