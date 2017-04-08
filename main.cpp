@@ -56,6 +56,7 @@ void move_shapes(sf::RenderWindow* window, sf::CircleShape* shapes, float move_v
 }
 void handle_events(sf::RenderWindow* window, float move_vecs[][2])
 {
+    float move_speed = 0.3;
     sf::Event event;
     while (window->pollEvent(event))
     {
@@ -64,17 +65,18 @@ void handle_events(sf::RenderWindow* window, float move_vecs[][2])
         if (event.type == sf::Event::KeyPressed)
             switch (event.key.code)
             {
+                
                 case sf::Keyboard::Up:
-                    move_vecs[0][1] += -0.1;
+                    move_vecs[0][1] -= move_speed;
                     break;
                 case sf::Keyboard::Down:
-                    move_vecs[0][1] += 0.1;
+                    move_vecs[0][1] += move_speed;
                     break;
                 case sf::Keyboard::Left:
-                    move_vecs[0][0] += -0.1;
+                    move_vecs[0][0] -= move_speed;
                     break;
                 case sf::Keyboard::Right:
-                    move_vecs[0][0] += 0.1;
+                    move_vecs[0][0] += move_speed;
                     break;
                 case sf::Keyboard::Q:
                     window->close();
@@ -96,10 +98,10 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 	srand(time(NULL));
-	int x_size = 600;
-	int y_size = 400;
+    sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+	int x_size = desktop.width;
+	int y_size = desktop.height;
 	char nr_shapes = argv[1][0] - '0';
-	
 	sf::Color colors[] = {sf::Color::Green, sf::Color::Red, sf::Color::Blue,sf::Color::Yellow};
     sf::RenderWindow window(sf::VideoMode(x_size, y_size), "SFML works!");
 	sf::CircleShape shapes[nr_shapes];
