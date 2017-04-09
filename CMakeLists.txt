@@ -3,15 +3,17 @@ set(CMAKE_CXX_FLAGS "-std=gnu++11")
 project(myproject)
 
 include_directories("${PROJECT_BINARY_DIR}")
+include_directories("${PROJECT_BINARY_DIR}/src")
+
 set(EXECUTABLE_NAME "myproject")
-
-
 add_executable(${EXECUTABLE_NAME} main.cpp)
 
 
 #Add libraries here
-add_library(bubbles_lib STATIC bubbles.cpp)
+add_subdirectory(src)
 target_link_libraries(${EXECUTABLE_NAME} bubbles_lib)
+
+
 
 
 
