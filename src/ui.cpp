@@ -16,7 +16,7 @@ int cmp(float left, float right)
 
 void handle_events(sf::RenderWindow* window, float player_vecs[][2], int nr_players)
 {
-    float move_speed = 0.3;
+    float move_speed = 0.2;
     int controls[][2][2] = {{{sf::Keyboard::Left, sf::Keyboard::Right},{sf::Keyboard::Up, sf::Keyboard::Down}},
     {{sf::Keyboard::A,sf::Keyboard::D},{sf::Keyboard::W,sf::Keyboard::S}}}; 
     sf::Event event;
