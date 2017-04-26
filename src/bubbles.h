@@ -1,11 +1,12 @@
 #ifndef BUBBLES_HEADER
 #define BUBBLES_HEADER
+#define max_speed 5.0
 #include "bubbles.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 namespace bubbles 
 {
-    void move_shapes(sf::RenderWindow* window, sf::CircleShape* shapes, float move_vecs[][2], int nr_shapes);
+    void move_shapes(sf::RenderWindow* window, sf::CircleShape* shapes, float move_vecs[][2], int nr_shapes, float player_vecs[][2], int nr_players);
     int cmp(float left, float right);
     int sgn(float x);
     void collide(sf::CircleShape* shapes, float move_vecs[][2], int shape_id, int neighbour_id);
@@ -16,7 +17,7 @@ namespace bubbles
     inline sf::Vector2f get_future_center(sf::CircleShape shape, float move_vec[2], float steps);
     inline sf::Vector2f get_center(sf::CircleShape shape);
 
-    void main(sf::RenderWindow* window, int nr_shapes);
+    void main(sf::RenderWindow* window, int nr_shapes, float player_vecs[][2], int nr_players);
     bool keep_bounds(unsigned int frame[], sf::CircleShape shape,float move_vec[]);
 
 }

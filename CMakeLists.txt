@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
-set(CMAKE_CXX_FLAGS "-std=gnu++11")
+set(CMAKE_CXX_FLAGS "-std=gnu++11 -pthread -lX11")
 project(myproject)
 
 set(SFML_STATIC_LIBS FALSE CACHE BOOL "Choose whether SFML is linked statically or shared.")
-
 
 include_directories("${PROJECT_BINARY_DIR}")
 include_directories("${PROJECT_BINARY_DIR}/src")
@@ -14,6 +13,7 @@ add_executable(${EXECUTABLE_NAME} main.cpp)
 #Add libraries here
 add_subdirectory(src)
 target_link_libraries(${EXECUTABLE_NAME} bubbles_lib)
+
 
 
 
