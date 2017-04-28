@@ -130,7 +130,7 @@ int move_shapes(sf::RenderWindow* window, sf::CircleShape* shapes, float move_ve
                 bool space_avalaible = nr_shapes < max_nr_shapes - 1;
                 bool share_color = shapes[shape_id].getFillColor() != shapes[neighbour_id].getFillColor();
                 bool large_enough = shapes[largest_shape].getRadius() > min_shape_size;
-                if (space_avalaible && share_color && large_enough)
+                if (true && space_avalaible && share_color && large_enough)
                 {
                     
                     split_shape(shapes, move_vecs, largest_shape, nr_shapes);

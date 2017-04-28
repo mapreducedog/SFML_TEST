@@ -27,13 +27,13 @@ void handle_events(sf::RenderWindow* window, float player_vecs[][2], int nr_play
         if ((event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) && nr_players)
         {
             bool is_keydown = event.type == sf::Event::KeyPressed;
-            for (unsigned int i = 0; i < (4 << nr_players); i++) //rather than 3 inner loops, we use one for easy breaking
+            for (unsigned int i = 0; i < (2 << nr_players); i++) //rather than 3 inner loops, we use one for easy breaking
             {
                 //we bitwise innerloop here, with direction being innermost, so in [player dimension direction]
                 //we loop as [0 0 0], [0 0 1], [0 1 0], [0 1 1], [1 0 0], [1 0 1], [1 1 0], [1 1 1]
-                int player = !!(i & 4); 
-                int dimension = !!(i & 2);
-                int direction = (i & 1);
+                unsigned int player    =   i >> 2; 
+                unsigned int dimension =!!(i & 2);
+                unsigned int direction =   i & 1;
                 
                 
                 if (controls[player][dimension][direction] == event.key.code)

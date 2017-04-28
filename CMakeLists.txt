@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-set(CMAKE_CXX_FLAGS "-std=gnu++11 -pthread -lX11")
+set(CMAKE_CXX_FLAGS "-std=gnu++11 -m64 -march=native -pthread -lX11")
 project(myproject)
 
 set(SFML_STATIC_LIBS FALSE CACHE BOOL "Choose whether SFML is linked statically or shared.")
