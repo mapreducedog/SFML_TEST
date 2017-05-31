@@ -3,6 +3,10 @@
 
 namespace ui 
 {
+int sgn(int x)
+{
+    return (x > 0) - (x < 0);
+}
 int sgn(float x)
 {
     return (x > 0) - (x < 0);
@@ -39,8 +43,8 @@ void handle_events(sf::RenderWindow* window, float player_vecs[][2], int nr_play
                 if (controls[player][dimension][direction] == event.key.code)
                 {
                     float cur_speed =  player_vecs[player][dimension];
-                    int key_direction = direction - !direction;
-                    bool diff_sgn = (key_direction > 0) - (key_direction < 0) != sgn(cur_speed);
+                    int key_direction = direction - !direction; //remap to -1, 1 (left/up, right/down)
+                    bool diff_sgn = sgn(key_direction) != sgn(cur_speed); //key-event opposite direction of current direction
                     player_vecs[player][dimension] = is_keydown * key_direction * move_speed + 
                     !is_keydown * diff_sgn * cur_speed; //accelerate on keydown, or stop on keyup of the current direction (continue with current speed on keyup of opposite direction)
                     break;

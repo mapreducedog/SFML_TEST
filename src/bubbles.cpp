@@ -1,4 +1,5 @@
 #include "bubbles.h"
+#include <cmath>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
@@ -9,7 +10,6 @@ int sgn(float x)
 {
     return (x > 0) - (x < 0);
 }
-    
     
 void collide(sf::CircleShape* shapes, float move_vecs[][2], int shape_id, int neighbour_id)
 {
@@ -27,6 +27,8 @@ void collide(sf::CircleShape* shapes, float move_vecs[][2], int shape_id, int ne
         move_vecs[neighbour_id][dim] =  other_contrib*shape_spd*shape_size - own_contrib*neighbour_spd;
     }
 }
+
+
 
 
 
@@ -56,25 +58,59 @@ bool check_collission(sf::CircleShape* shapes,int shape_id, int neighbour_id)
     float totradius =  shapes[shape_id].getRadius() + shapes[neighbour_id].getRadius();
     return distance <= totradius;
 }
+
+void merge_shapes(sf::CircleShape* shapes, float move_vecs[][2], int shape_id,int neighbour_id, int nr_shapes)
+{
+    int max_id = std::max(shape_id, neighbour_id);
+    int min_id = std::min(shape_id, neighbour_id);
+    sf::CircleShape& receptor = shapes[min_id];
+    sf::CircleShape& donor = shapes[max_id];
+    
+    sf::Vector2f new_center = (get_center(receptor) + get_center(donor)) * 0.5f;
+    float donor_rad = donor.getRadius();
+    float rec_rad = receptor.getRadius();
+    float new_radius = donor.getRadius() + receptor.getRadius();
+    float contr_don = donor_rad / new_radius;
+    float contr_rec = rec_rad / new_radius;
+    
+    for (int i = 0; i < 2; i++)
+    {
+        move_vecs[min_id][i] = (move_vecs[min_id][i] * contr_rec  + move_vecs[max_id][i] * contr_don);
+        std::swap(move_vecs[max_id][i], move_vecs[nr_shapes - 1][i]);
+    }
+    std::swap(shapes[max_id], shapes[nr_shapes - 1]); //move the donor circle to the non-drawn part
+    receptor.setRadius(new_radius);
+    receptor.setPosition(new_center - sf::Vector2f(new_radius, new_radius));
+}
+
+
 void split_shape(sf::CircleShape* shapes, float move_vecs[][2], int shape_id, int nr_shapes)
 {
     sf::CircleShape& shape = shapes[shape_id];
+    int twin_id = nr_shapes;
     sf::Vector2f center = get_center(shape);
-    sf::CircleShape& twin = shapes[nr_shapes];
+    sf::CircleShape& twin = shapes[twin_id];
+
     float* shape_move = move_vecs[shape_id];
-    shape_move[0] /= 2;
-    shape_move[1] /= 2;
-    sf::Vector2f dir = sf::Vector2f(sgn(shape_move[0]),  sgn(shape_move[1]));
-    float* twin_move = move_vecs[nr_shapes];
-    twin_move[0] = -1 * shape_move[0];
-    twin_move[1] = -1 * shape_move[1];
-    
+    float* twin_move = move_vecs[twin_id];
+    float parent_move[2] = {shape_move[0], shape_move[1]};
+    float angle = 0.25f;
+    float pi = 3.14159265358979f;
+    twin_move[0] = parent_move[0] * std::cos(-angle * pi) - parent_move[1] * std::sin(-angle * pi);
+    twin_move[1] = parent_move[0] * std::sin(-angle * pi) + parent_move[1] * std::cos(-angle * pi); 
+    shape_move[0] = parent_move[0] * std::cos(angle * pi) - parent_move[1] * std::sin(angle * pi);
+    shape_move[1] = parent_move[0] * std::sin(angle * pi) + parent_move[1] * std::cos(angle * pi); 
+
     float radius = shape.getRadius()/ 2;
     shape.setRadius(radius);
-    shape.move(radius * dir);
     twin.setRadius(shape.getRadius());
+    twin.setPosition(shape.getPosition());
     twin.setFillColor(shape.getFillColor());
-    twin.setPosition(center - radius * dir);
+    while (check_collission(shapes, shape_id, twin_id))
+    {
+        shape.move(shape_move[0], shape_move[1]);
+        twin.move(twin_move[0], twin_move[1]);
+    }
     
 }
 inline bool check_future_collission(sf::CircleShape* shapes, float move_vecs[][2], int shape_id, int neighbour_id)
@@ -114,6 +150,7 @@ int move_shapes(sf::RenderWindow* window, sf::CircleShape* shapes, float move_ve
 	for (int shape_id = 0;  shape_id < nr_shapes ; shape_id++)
 	{
 		sf::CircleShape shape = shapes[shape_id];
+        shape.setOri
 		float * move_vec = move_vecs[shape_id];
         for (int neighbour_id = 0; neighbour_id < nr_shapes && !was_budged[shape_id]; 
             neighbour_id++)
@@ -128,9 +165,14 @@ int move_shapes(sf::RenderWindow* window, sf::CircleShape* shapes, float move_ve
                 collide(shapes, move_vecs,shape_id, neighbour_id);
                 int largest_shape = (shapes[shape_id].getRadius() > shapes[neighbour_id].getRadius()) ? shape_id : neighbour_id;
                 bool space_avalaible = nr_shapes < max_nr_shapes - 1;
-                bool share_color = shapes[shape_id].getFillColor() != shapes[neighbour_id].getFillColor();
+                bool share_color = shapes[shape_id].getFillColor() == shapes[neighbour_id].getFillColor();
                 bool large_enough = shapes[largest_shape].getRadius() > min_shape_size;
-                if (true && space_avalaible && share_color && large_enough)
+                if (share_color)
+                {
+                    merge_shapes(shapes, move_vecs,shape_id, neighbour_id, nr_shapes);
+                    nr_shapes--;
+                }
+                else if (space_avalaible && large_enough)
                 {
                     
                     split_shape(shapes, move_vecs, largest_shape, nr_shapes);
